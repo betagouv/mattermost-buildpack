@@ -97,3 +97,20 @@ bash /app/mattermost/bin/postdeploy
 `.env.sample` is configured to work with this stack. You just need to create the bucket `mattermost` in minio.
 
 [1]: https://doc.scalingo.com/platform/deployment/buildpacks/custom
+
+## Update
+
+- read the release note and the upgrade note: https://docs.mattermost.com/install/self-managed-changelog.html / https://docs.mattermost.com/upgrade/important-upgrade-notes.html
+- announce the upgrade (off-peak)
+- back up the database before migration
+- apply the mattermost recommendations for the upgrade if there are any
+- change the version in the environment variable
+- redeploy on scalingo
+- apply the mattermost instructions if there are any
+- test that everything is working well
+
+If there is a problem:
+
+- turn off the instance
+- restored the database
+- deploy the old version
