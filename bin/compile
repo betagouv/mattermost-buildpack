@@ -104,6 +104,22 @@ cp "${buildpack}/postdeploy.sh" "${MATTERMOST_PATH}/bin/postdeploy"
 chmod +x "${MATTERMOST_PATH}/bin/postdeploy"
 finished
 
+echo "-----> Add backup script from $BUILDPACK_DIR/bin/pg-backup.sh to $BUILD_DIR/"
+cp "$BUILDPACK_DIR/bin/pg-backup.sh" $BUILD_DIR/
+
+cat << EOF > "${BUILD_DIR}/cron.json"
+{
+  "jobs": [
+    {
+      "command": "${CRON_TIME} bash pg-backup.sh",
+      "size": "S"
+    }
+  ]
+}
+EOF
+
+echo "-----> backup script moved"
+
 step "Cleaning up tmp files"
 rm -rf "${TMP_PATH}"
 
