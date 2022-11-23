@@ -104,14 +104,14 @@ cp "${buildpack}/postdeploy.sh" "${MATTERMOST_PATH}/bin/postdeploy"
 chmod +x "${MATTERMOST_PATH}/bin/postdeploy"
 finished
 
-echo "-----> Add backup script from $BUILDPACK_DIR/bin/pg-backup.sh to $BUILD_DIR/"
-cp "$BUILDPACK_DIR/bin/pg-backup.sh" $BUILD_DIR/
+echo "-----> Add backup script from $BUILDPACK_DIR/bin/pg-clean.sh to $BUILD_DIR/"
+cp "$BUILDPACK_DIR/bin/pg-clean.sh" $BUILD_DIR/
 
 cat << EOF > "${BUILD_DIR}/cron.json"
 {
   "jobs": [
     {
-      "command": "${CRON_TIME} bash pg-backup.sh",
+      "command": "${CRON_TIME} bash pg-clean.sh",
       "size": "S"
     }
   ]
