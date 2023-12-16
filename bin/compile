@@ -6,6 +6,8 @@ set -eo pipefail
 BUILD_DIR=${1:-}
 CACHE_DIR=${2:-}
 ENV_DIR=${3:-}
+BUILDPACK_DIR="$(dirname $(dirname $0))"
+CRON_TIME=${PG_CLEAN_CRON_TIME:-"*/10 * * * *"}
 buildpack="$(cd -P "$(dirname "$0")" && pwd)"
 
 source "${buildpack}/common.sh"
@@ -103,6 +105,22 @@ start "Building postdeploy"
 cp "${buildpack}/postdeploy.sh" "${MATTERMOST_PATH}/bin/postdeploy"
 chmod +x "${MATTERMOST_PATH}/bin/postdeploy"
 finished
+
+echo "-----> Add backup script from $BUILDPACK_DIR/bin/pg-clean.sh to $BUILD_DIR/"
+cp "$BUILDPACK_DIR/bin/pg-clean.sh" $BUILD_DIR/
+
+cat << EOF > "${BUILD_DIR}/cron.json"
+{
+  "jobs": [
+    {
+      "command": "${CRON_TIME} bash pg-clean.sh",
+      "size": "S"
+    }
+  ]
+}
+EOF
+
+echo "-----> backup script moved"
 
 step "Cleaning up tmp files"
 rm -rf "${TMP_PATH}"
